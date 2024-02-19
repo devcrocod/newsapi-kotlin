@@ -10,9 +10,11 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
+internal expect fun getHttpClient(block: HttpClientConfig<*>.() -> Unit = {}): HttpClient
+
 
 public class NewsApiClient(token: String) {
-    internal val client = HttpClient {
+    internal val client: HttpClient = getHttpClient {
         install(Auth) {
             bearer {
                 loadTokens { BearerTokens(token, "") }
