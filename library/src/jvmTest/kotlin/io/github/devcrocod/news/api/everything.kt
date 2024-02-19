@@ -3,9 +3,11 @@ package io.github.devcrocod.news.api
 import io.github.devcrocod.news.api.models.SourceId
 import io.github.devcrocod.news.api.request.everything
 import kotlinx.coroutines.runBlocking
+import kotlin.collections.first
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import kotlin.text.contains
 
 class EverythingTests {
 

@@ -4,6 +4,7 @@ import io.github.devcrocod.news.api.models.Category
 import io.github.devcrocod.news.api.models.Country
 import io.github.devcrocod.news.api.request.sources
 import kotlinx.coroutines.runBlocking
+import kotlin.collections.first
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

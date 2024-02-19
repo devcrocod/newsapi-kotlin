@@ -5,6 +5,7 @@ import io.github.devcrocod.news.api.models.Country
 import io.github.devcrocod.news.api.models.SourceId
 import io.github.devcrocod.news.api.request.topHeadlines
 import kotlinx.coroutines.runBlocking
+import kotlin.collections.first
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
