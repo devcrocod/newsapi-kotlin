@@ -2,7 +2,7 @@ package io.github.devcrocod.news.api.models
 
 import kotlinx.serialization.Serializable
 
-public class SourceId(id: String) : CriteriaSet<SourceId>(id) {
+public class SourceId internal constructor(id: String) : CriteriaSet<SourceId>(id) {
 
     public override infix fun and(other: CriteriaSet<SourceId>): SourceId {
         this.set.add(other.option)

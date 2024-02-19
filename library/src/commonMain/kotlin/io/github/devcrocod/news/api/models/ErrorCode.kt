@@ -4,6 +4,7 @@ import io.github.devcrocod.news.api.exception.*
 import io.github.devcrocod.news.api.response.Response
 import kotlinx.serialization.Serializable
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun throwNewsApiException(response: Response.ErrorResponse): Nothing = when (response.code) {
     ErrorCode.ApiKeyDisabled, ErrorCode.ApiKeyExhausted,
     ErrorCode.ApiKeyInvalid, ErrorCode.ApiKeyMissing -> throw ApiKeyException(response.message)

@@ -10,7 +10,7 @@ public sealed class CriteriaSet<T>(public val option: String) {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as SourceId
+        other as CriteriaSet<*>
 
         if (option != other.option) return false
         if (set != other.set) return false

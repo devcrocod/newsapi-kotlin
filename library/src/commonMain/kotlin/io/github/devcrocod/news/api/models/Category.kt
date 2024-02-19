@@ -9,7 +9,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = CategorySerializer::class)
-public class Category(code: String) : CriteriaSet<Category>(code) {
+public class Category internal constructor(code: String) : CriteriaSet<Category>(code) {
     public companion object {
         public val BUSINESS: Category = Category("business")
         public val ENTERTAINMENT: Category = Category("entertainment")

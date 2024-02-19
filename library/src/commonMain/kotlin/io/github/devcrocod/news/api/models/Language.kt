@@ -9,7 +9,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = LanguageSerializer::class)
-public class Language(code: String) : CriteriaSet<Language>(code) {
+public class Language internal constructor(code: String) : CriteriaSet<Language>(code) {
     public companion object {
         public val AR: Language = Language("ar")
         public val DE: Language = Language("de")
