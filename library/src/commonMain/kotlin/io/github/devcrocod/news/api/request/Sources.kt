@@ -7,7 +7,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
-public suspend fun NewsApiClient.sources(body: SourcesRequest.() -> Unit): List<Source> {
+public suspend fun NewsApiClient.sources(body: SourcesRequest.() -> Unit = {}): List<Source> {
     val res: Response<Source> = this.client.get("top-headlines/sources") {
         url { parameters.appendAll(SourcesRequest().apply(body).build().getParameters()) }
     }.body()
