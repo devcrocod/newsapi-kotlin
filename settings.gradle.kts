@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "newsapi-kotlin"
-include(":newsapi")
+include(":newsapi-kotlin")
