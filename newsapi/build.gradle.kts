@@ -19,7 +19,6 @@ kotlin {
             }
         }
     }
-    iosX64()
     iosArm64()
     iosSimulatorArm64()
     linuxX64()
@@ -72,7 +71,7 @@ kotlin {
 }
 
 android {
-    namespace = "io.github.devcrocod.newsapi.kotlin"
+    namespace = "io.github.devcrocod.news.api"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
