@@ -2,6 +2,29 @@ package io.github.devcrocod.news.api.models
 
 import kotlinx.serialization.Serializable
 
+/**
+ * Represents a source ID for retrieving news articles.
+ *
+ * Possible options: [ABC_News], [ABC_News_AU], [Aftenposten], [Al_Jazeera_English], [ANSA_it], [Argaam],
+ * [Ars_Technica], [Ary_News], [Associated_Press], [Australian_Financial_Review], [Axios], [BBC_News], [BBC_Sport],
+ * [Bild], [Blasting_News_BR], [Bleacher_Report], [Bloomberg], [Breitbart_News], [Business_Insider],
+ * [Business_Insider_UK], [Buzzfeed], [CBC_News], [CBS_News], [CNN], [CNN_Spanish], [Crypto_Coins_News],
+ * [Der_Tagesspiegel], [Die_Zeit], [El_Mundo], [Engadget], [Entertainment_Weekly], [ESPN], [ESPN_Cric_Info],
+ * [Financial_Post], [Focus], [Football_Italia], [Fortune], [FourFourTwo], [Fox_News], [Fox_Sports], [Globo],
+ * [Google_News], [Google_News_Argentina], [Google_News_Australia], [Google_News_Brasil], [Google_News_Canada],
+ * [Google_News_France], [Google_News_India], [Google_News_Israel], [Google_News_Italy], [Google_News_Russia],
+ * [Google_News_SaudiArabia], [Google_News_UK], [Goteborgs_Posten], [Gruenderszene], [Hacker_News], [Handelsblatt],
+ * [IGN], [Il_Sole_24_Ore], [Independent], [Infobae], [InfoMoney], [La_Gaceta], [La_Nacion], [La_Repubblica],
+ * [Le_Monde], [Lenta], [Lequipe], [Les_Echos], [Liberation], [Marca], [Mashable], [Medical_News_Today], [MSNBC],
+ * [MTV_News], [MTV_News_UK], [National_Geographic], [National_Review], [NBC_News], [News24], [New_Scientist],
+ * [News_COM_AU], [Newsweek], [New_York_Magazine], [Next_Big_Future], [NFL_News], [NHL_News], [NRK], [Politico],
+ * [Polygon], [RBC], [Recode], [Reddit_ALL], [Reuters], [RT], [RTE], [RTL_Nieuws], [SABQ], [Spiegel_Online],
+ * [Svenska_Dagbladet], [T3n], [TalkSport], [TechCrunch], [TechCrunch_CN], [TechRadar], [The_American_Conservative],
+ * [The_Globe_And_Mail], [The_Hill], [The_Hindu], [The_Huffington_Post], [The_Irish_Times], [The_Jerusalem_Post],
+ * [The_Lad_Bible], [The_Next_Web], [The_Sport_Bible], [The_Times_of_India], [The_Verge], [The_Wall_Street_Journal],
+ * [The_Washington_Post], [The_Washington_Times], [Time], [USA_Today], [Vice_News], [Wired], [Wired_DE],
+ * [Wirtschafts_Woche], [Xinhua_Net], [Ynet]
+ */
 public class SourceId internal constructor(id: String) : CriteriaSet<SourceId>(id) {
 
     public override infix fun and(other: CriteriaSet<SourceId>): SourceId {
@@ -141,6 +164,17 @@ public class SourceId internal constructor(id: String) : CriteriaSet<SourceId>(i
     }
 }
 
+/**
+ * A data class representing a source.
+ *
+ * @property id The ID of the source.
+ * @property name The name of the source.
+ * @property description The description of the source.
+ * @property url The URL of the source.
+ * @property category The category of the source.
+ * @property language The language of the source.
+ * @property country The country of the source.
+ */
 @Serializable
 public data class Source(
     val id: String?,

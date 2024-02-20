@@ -9,6 +9,18 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * Represents an article from a news source.
+ *
+ * @property source The [source][Source] of the article.
+ * @property author The author of the article.
+ * @property title The headline or title of the article.
+ * @property description The description or snippet from the article.
+ * @property url The direct URL to the article.
+ * @property urlToImage The URL to the image associated with the article.
+ * @property publishedAt The date and time that the article was published, in UTC (+000).
+ * @property content The unformatted content of the article, where available. This is truncated to 200 chars.
+ */
 @Serializable
 public data class Article(
     val source: Source,
@@ -22,6 +34,9 @@ public data class Article(
     val content: String?
 )
 
+/**
+ * LocalDateTimeSerializer is a custom serializer that is used to serialize and deserialize LocalDateTime objects.
+ */
 public object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
 

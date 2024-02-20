@@ -8,6 +8,10 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * Represents language.
+ * Possible options: [AR], [DE], [EN], [ES], [FR], [HE], [IT], [NL], [NO], [PT], [RU], [SV], [UD], [ZH]
+ */
 @Serializable(with = LanguageSerializer::class)
 public class Language internal constructor(code: String) : CriteriaSet<Language>(code) {
     public companion object {

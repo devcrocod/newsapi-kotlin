@@ -1,6 +1,7 @@
 package io.github.devcrocod.news.api.request
 
 import io.github.devcrocod.news.api.NewsApiClient
+import io.github.devcrocod.news.api.exception.ParameterException
 import io.github.devcrocod.news.api.models.*
 import io.github.devcrocod.news.api.response.Response
 import io.ktor.client.call.*
@@ -10,6 +11,38 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+/**
+ * Retrieves the top headlines based on the specified parameters.
+ *
+ * - [country][SourcesRequest.country] - Find sources that display news in a specific country.
+ * Possible options see in [Country].
+ * - [category][SourcesRequest.category] - Find sources that display news of this category.
+ * Possible options see in [Category].
+ * - [sources][EverythingRequest.sources] - [Identifiers][SourceId] for the news sources or blogs you want headlines from.
+ * - [phrase][EverythingRequest.phrase] - Keywords or phrases to search for in the article title and body. Also see [EverythingRequest.buildPhrase] for advanced search.
+ * - [pageSize][EverythingRequest.pageSize] - The number of results to return per page.
+ * Default: `100`.
+ * Maximum: `100`.
+ * - [page][EverythingRequest.page] - Use this to page through the results.
+ * Default: `100`.
+ *
+ * Sample:
+ * ```
+ * // Get top business headlines from Germany
+ * client.topHeadlines {
+ *     country = Country.DE
+ *     category = Category.BUSINESS
+ * }
+ * ```
+ *
+ * @param body The block of code that configures the [TopHeadlinesRequest] object.
+ * @return A list of [Article] objects representing the top headlines.
+ * @throws NewsApiException when an unexpected error occurs.
+ * @throws ApiKeyException when the API key is missing, invalid, disabled, or exhausted.
+ * @throws ParameterException when the request parameters are invalid or missing.
+ * @throws RateLimitedException when the API rate limit has been reached.
+ * @throws SourceException when there are issues with the specified news source.
+ */
 public suspend fun NewsApiClient.topHeadlines(body: TopHeadlinesRequest.() -> Unit): List<Article> {
     val res: Response<Article> = this.client.get("top-headlines") {
         url { parameters.appendAll(TopHeadlinesRequest().apply(body).build().getParameters()) }
@@ -40,6 +73,31 @@ internal data class TopHeadlinesParams(
         }
 }
 
+/**
+ * Builder of request to search top-headlines.
+ *
+ * - [country][SourcesRequest.country] - Find sources that display news in a specific country.
+ * Possible options see in [Country].
+ * - [category][SourcesRequest.category] - Find sources that display news of this category.
+ * Possible options see in [Category].
+ * - [sources][EverythingRequest.sources] - [Identifiers][SourceId] for the news sources or blogs you want headlines from.
+ * - [phrase][EverythingRequest.phrase] - Keywords or phrases to search for in the article title and body. Also see [EverythingRequest.buildPhrase] for advanced search.
+ * - [pageSize][EverythingRequest.pageSize] - The number of results to return per page.
+ * Default: `100`.
+ * Maximum: `100`.
+ * - [page][EverythingRequest.page] - Use this to page through the results.
+ * Default: `100`.
+ *
+ * Sample:
+ * ```
+ * // Get top business headlines from Germany
+ * client.topHeadlines {
+ *     country = Country.DE
+ *     category = Category.BUSINESS
+ * }
+ * ```
+ *
+ */
 public class TopHeadlinesRequest internal constructor() {
     public var country: Country? = null
     public var category: Category? = null
@@ -48,6 +106,19 @@ public class TopHeadlinesRequest internal constructor() {
     public var pageSize: Int? = null
     public var page: Int? = null
 
+    /**
+     * Builds a phrase for advanced search using the provided lambda function [builderAction].
+     * - [append()][KeywordBuilder.append] - Add new keywords or phrases in search
+     * - [matchPhrase()][KeywordBuilder.matchPhrase] - Add string for exact phrase match.
+     * - [+][KeywordBuilder.unaryPlus] - Prepend words or phrases that must appear
+     * - [-][KeywordBuilder.unaryMinus] - Prepend words that must not appear
+     * - [and][KeywordBuilder.and]
+     * - [or][KeywordBuilder.or]
+     * - [not][KeywordBuilder.not]
+     *
+     * @param builderAction The lambda function that takes an instance of [KeywordBuilder] and allows customization of the phrase.
+     * @return The built phrase as a [String].
+     */
     @OptIn(ExperimentalContracts::class)
     public fun buildPhrase(builderAction: KeywordBuilder.() -> Unit): String {
         contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
@@ -63,8 +134,8 @@ public class TopHeadlinesRequest internal constructor() {
             """.trimIndent()
         }
 
-        val phrase = validateQ(phrase)
-        val sources = validateSource(sources)
+        validateQ(phrase)
+        validateSource(sources)
         return TopHeadlinesParams(
             country?.toString(),
             category?.toString(),
@@ -75,22 +146,12 @@ public class TopHeadlinesRequest internal constructor() {
         )
     }
 
-    private fun validateQ(value: String?): String? {
-        return value?.let {
-            if (it.length > 500)
-                it.substring(0..500)// TODO("add logger")
-            else
-                it
-        }
+    private fun validateQ(value: String?) {
+        value?.let { if (it.length > 500) throw ParameterException("The `phrase` parameter length exceeds the limit of 500 characters.") }
     }
 
-    private fun validateSource(value: SourceId?): SourceId? {
-        return value?.let {
-            if (it.set.size > 20)
-                it // TODO("add logger, take 20")
-            else
-                it
-        }
+    private fun validateSource(value: SourceId?) {
+        value?.let { if (it.set.size > 20) throw ParameterException("The number of `sources` exceeds the limit of 20.") }
     }
 
     override fun toString(): String {

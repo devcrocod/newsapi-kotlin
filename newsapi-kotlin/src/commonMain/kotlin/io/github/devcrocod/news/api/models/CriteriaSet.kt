@@ -1,6 +1,12 @@
 package io.github.devcrocod.news.api.models
 
 
+/**
+ * Represents a set of criteria with a specified option.
+ *
+ * @param T the type of the criteria set
+ * @property option the option associated with the criteria set
+ */
 public sealed class CriteriaSet<T>(public val option: String) {
     internal val set: MutableSet<String> = mutableSetOf(option)
 

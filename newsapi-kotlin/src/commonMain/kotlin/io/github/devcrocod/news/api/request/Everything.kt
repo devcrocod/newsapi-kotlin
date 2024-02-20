@@ -1,6 +1,7 @@
 package io.github.devcrocod.news.api.request
 
 import io.github.devcrocod.news.api.NewsApiClient
+import io.github.devcrocod.news.api.exception.ParameterException
 import io.github.devcrocod.news.api.models.*
 import io.github.devcrocod.news.api.response.Response
 import io.ktor.client.call.*
@@ -11,6 +12,49 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+/**
+ * Retrieves a list of articles based on the specified search criteria.
+ *
+ * - [phrase][EverythingRequest.phrase] - Keywords or phrases to search for in the article title and body. Also see [EverythingRequest.buildPhrase] for advanced search.
+ * - [searchIn][EverythingRequest.searchIn] - The fields to restrict your phrase [search][Search] to. Default: all fields are searched.
+ * - [sources][EverythingRequest.sources] - [Identifiers][SourceId] for the news sources or blogs you want headlines from.
+ * - [domains][EverythingRequest.domains] - A comma-seperated string of domains (e.g. bbc.co.uk, techcrunch.com, engadget.com) to restrict the search to.
+ * - [from][EverythingRequest.from] - A date and optional time for the _oldest_ article allowed.
+ * Default: the oldest, according to your plan.
+ * - [to][EverythingRequest.to] - A date and optional time for the _newest_ article allowed.
+ * Default: the newest, according to your plan.
+ * - [language][EverythingRequest.language] -
+ * The 2-letter ISO-639-1 code of the language you want to get headlines for.
+ * See [Language].
+ * Default: all languages.
+ * - [sortBy][EverythingRequest.sortBy] - The order to sort the articles in.
+ * Possible options: [SortBy.RELEVANCY], [SortBy.POPULARITY], [SortBy.PUBLISHED_AT].
+ * Default: [SortBy.PUBLISHED_AT].
+ * - [pageSize][EverythingRequest.pageSize] - The number of results to return per page.
+ * Default: `100`.
+ * Maximum: `100`.
+ * - [page][EverythingRequest.page] - Use this to page through the results.
+ * Default: `100`.
+ *
+ * Sample:
+ * ```
+ * client.everything {
+ *     phrase = buildPhrase {
+ *         append("bitcoin") and "crypto" and "ethereum"
+ *     }
+ *     searchIn = Search.Title
+ *     language = Language.EN and Language.DE
+ * }
+ * ```
+ *
+ * @param body A lambda function that allows customization of the search parameters using an instance of [EverythingRequest].
+ * @return A list of [Article] objects that match the search criteria.
+ * @throws NewsApiException when an unexpected error occurs.
+ * @throws ApiKeyException when the API key is missing, invalid, disabled, or exhausted.
+ * @throws ParameterException when the request parameters are invalid or missing.
+ * @throws RateLimitedException when the API rate limit has been reached.
+ * @throws SourceException when there are issues with the specified news source.
+ */
 public suspend fun NewsApiClient.everything(body: EverythingRequest.() -> Unit): List<Article> {
     val res: Response<Article> = this.client.get("everything") {
         url { parameters.appendAll(EverythingRequest().apply(body).build().getParameters()) }
@@ -49,6 +93,42 @@ internal data class EverythingParams(
         }
 }
 
+/**
+ * Builder of request to search for everything.
+ *
+ * This class provides various parameters that can be set to customize the search query.
+ *
+ * @property phrase Keywords or phrases to search for in the article title and body. Also see [EverythingRequest.buildPhrase] for advanced search.
+ * @property searchIn The fields to restrict your phrase [search][Search] to. Default: all fields are searched.
+ * @property sources _[Identifiers][SourceId] for the news sources or blogs you want headlines from.
+ * @property domains A comma-seperated string of domains (e.g. bbc.co.uk, techcrunch.com, engadget.com) to restrict the search to.
+ * @property from A date and optional time for the _oldest_ article allowed.
+ * Default: the oldest, according to your plan.
+ * @property to A date and optional time for the _newest_ article allowed.
+ * Default: the newest, according to your plan.
+ * @property language The 2-letter ISO-639-1 code of the language you want to get headlines for.
+ * See [Language].
+ * Default: all languages.
+ * @property sortBy The order to sort the articles in.
+ * Possible options: [SortBy.RELEVANCY], [SortBy.POPULARITY], [SortBy.PUBLISHED_AT].
+ * Default: [SortBy.PUBLISHED_AT].
+ * @property pageSize The number of results to return per page.
+ * Default: `100`.
+ * Maximum: `100`.
+ * @property page Use this to page through the results.
+ * Default: `100`.
+ *
+ * Sample:
+ * ```
+ * client.everything {
+ *     phrase = buildPhrase {
+ *         append("bitcoin") and "crypto" and "ethereum"
+ *     }
+ *     searchIn = Search.Title
+ *     language = Language.EN and Language.DE
+ * }
+ * ```
+ */
 public class EverythingRequest internal constructor() {
     public var phrase: String? = null
     public var searchIn: Search? = null
@@ -61,6 +141,19 @@ public class EverythingRequest internal constructor() {
     public var pageSize: Int? = null
     public var page: Int? = null
 
+    /**
+     * Builds a phrase for advanced search using the provided lambda function [builderAction].
+     * - [append()][KeywordBuilder.append] - Add new keywords or phrases in search
+     * - [matchPhrase()][KeywordBuilder.matchPhrase] - Add string for exact phrase match.
+     * - [+][KeywordBuilder.unaryPlus] - Prepend words or phrases that must appear
+     * - [-][KeywordBuilder.unaryMinus] - Prepend words that must not appear
+     * - [and][KeywordBuilder.and]
+     * - [or][KeywordBuilder.or]
+     * - [not][KeywordBuilder.not]
+     *
+     * @param builderAction The lambda function that takes an instance of [KeywordBuilder] and allows customization of the phrase.
+     * @return The built phrase as a [String].
+     */
     @OptIn(ExperimentalContracts::class)
     public fun buildPhrase(builderAction: KeywordBuilder.() -> Unit): String {
         contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
@@ -76,8 +169,8 @@ public class EverythingRequest internal constructor() {
             """.trimIndent()
         }
 
-        val phrase = validateQ(phrase)
-        val sources = validateSource(sources)
+        validateQ(phrase)
+        validateSource(sources)
         return EverythingParams(
             phrase,
             searchIn?.toString(),
@@ -92,22 +185,12 @@ public class EverythingRequest internal constructor() {
         )
     }
 
-    private fun validateQ(value: String?): String? {
-        return value?.let {
-            if (it.length > 500)
-                it.substring(0..500)// TODO("add logger")
-            else
-                it
-        }
+    private fun validateQ(value: String?) {
+        value?.let { if (it.length > 500) throw ParameterException("The `phrase` parameter length exceeds the limit of 500 characters.") }
     }
 
-    private fun validateSource(value: SourceId?): SourceId? {
-        return value?.let {
-            if (it.set.size > 20)
-                it // TODO("add logger, take 20")
-            else
-                it
-        }
+    private fun validateSource(value: SourceId?) {
+        value?.let { if (it.set.size > 20) throw ParameterException("The number of `sources` exceeds the limit of 20.") }
     }
 
     override fun toString(): String {

@@ -8,6 +8,17 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
+/**
+ * Represents a category for grouping criteria sets.
+ *
+ * @property BUSINESS - Represents the 'business' category for grouping criteria sets.
+ * @property ENTERTAINMENT - Represents the 'entertainment' category for grouping criteria sets.
+ * @property GENERAL - Represents the 'general' category for grouping criteria sets.
+ * @property HEALTH - Represents the 'health' category for grouping criteria sets.
+ * @property SCIENCE - Represents the 'science' category for grouping criteria sets.
+ * @property SPORTS - Represents the 'sports' category for grouping criteria sets.
+ * @property TECHNOLOGY - Represents the 'technology' category for grouping criteria sets.
+ */
 @Serializable(with = CategorySerializer::class)
 public class Category internal constructor(code: String) : CriteriaSet<Category>(code) {
     public companion object {
@@ -20,6 +31,12 @@ public class Category internal constructor(code: String) : CriteriaSet<Category>
         public val TECHNOLOGY: Category = Category("technology")
     }
 
+    /**
+     * Adds another Category to the current Category.
+     *
+     * @param other The Category to be added to the current Category.
+     * @return The Category with the added CriteriaSet.
+     */
     override fun and(other: CriteriaSet<Category>): Category {
         this.set.add(other.option)
         return this

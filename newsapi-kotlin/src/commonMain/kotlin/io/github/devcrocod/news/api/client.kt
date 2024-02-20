@@ -13,6 +13,11 @@ import kotlinx.serialization.json.Json
 internal expect fun getHttpClient(block: HttpClientConfig<*>.() -> Unit = {}): HttpClient
 
 
+/**
+ * A client for accessing news data from the News API.
+ *
+ * @property token The API token used for authorization.
+ */
 public class NewsApiClient(token: String) {
     internal val client: HttpClient = getHttpClient {
         install(Auth) {
