@@ -98,8 +98,10 @@ internal data class EverythingParams(
  *
  * This class provides various parameters that can be set to customize the search query.
  *
- * @property phrase Keywords or phrases to search for in the article title and body. Also see [EverythingRequest.buildPhrase] for advanced search.
- * @property searchIn The fields to restrict your phrase [search][Search] to. Default: all fields are searched.
+ * @property phrase Keywords or phrases to search for in the article title and body.
+ * Also see [EverythingRequest.buildPhrase] for advanced search.
+ * @property searchIn The fields to restrict your phrase [search][Search] to.
+ * Default: all fields are searched.
  * @property sources _[Identifiers][SourceId] for the news sources or blogs you want headlines from.
  * @property domains A comma-seperated string of domains (e.g. bbc.co.uk, techcrunch.com, engadget.com) to restrict the search to.
  * @property from A date and optional time for the _oldest_ article allowed.

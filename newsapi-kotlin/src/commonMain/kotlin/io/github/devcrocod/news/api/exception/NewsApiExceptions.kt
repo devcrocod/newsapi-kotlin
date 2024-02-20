@@ -11,7 +11,7 @@ public open class NewsApiException : Exception {
 }
 
 /**
- * Custom exception class for API key related errors in the News API.
+ * Custom exception class for API key-related errors in the News API.
  *
  * This exception is used to indicate errors related to API keys. It extends the base [NewsApiException]
  * class and inherits its constructors.

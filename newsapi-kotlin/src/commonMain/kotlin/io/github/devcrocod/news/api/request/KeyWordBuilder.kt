@@ -8,7 +8,7 @@ package io.github.devcrocod.news.api.request
 public class KeywordBuilder internal constructor(private val builder: StringBuilder = StringBuilder()) :
     CharSequence by builder {
     /**
-     * Appends the given `value` to the `builder`.
+     * Appends given `value` to the `builder`.
      *
      * @param value The String to be added to the `builder`.
      */
@@ -57,7 +57,7 @@ public class KeywordBuilder internal constructor(private val builder: StringBuil
 
     /**
      * The "not" function can be called using the infix notation.
-     * It appends the string " NOT " followed by the given `value` to the `builder`.
+     * It appends the string "NOT" followed by the given `value` to the `builder`.
      *
      * @param value The String to follow the "NOT".
      * @returns KeywordBuilder instance after adding "NOT" with `value` to the `builder`.
